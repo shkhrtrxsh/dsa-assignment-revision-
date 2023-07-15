@@ -1,0 +1,377 @@
+Q-1) 
+#include <unordered_map>
+#include <string>
+
+int romanToInt(std::string s) {
+    std::unordered_map<char, int> symbol_values = {
+        {'I', 1},
+        {'V', 5},
+        {'X', 10},
+        {'L', 50},
+        {'C', 100},
+        {'D', 500},
+        {'M', 1000}
+    };
+
+    int total = 0;
+    int prev_value = 0;
+
+    for (int i = s.length() - 1; i >= 0; i--) {
+        int current_value = symbol_values[s[i]];
+
+        if (current_value >= prev_value) {
+            total += current_value;
+        } else {
+            total -= current_value;
+        }
+
+        prev_value = current_value;
+    }
+
+    return total;
+}
+#include <iostream>
+
+int main() {
+    std::cout << romanToInt("III") << std::endl;   // Output: 3
+    std::cout << romanToInt("LVIII") << std::endl; // Output: 58
+
+    return 0;
+}
+
+Q-2)
+
+#include <unordered_set>
+#include <algorithm>
+
+int lengthOfLongestSubstring(std::string s) {
+    int n = s.length();
+    int maxLength = 0;
+    int i = 0, j = 0;
+    std::unordered_set<char> uniqueChars;
+
+    while (i < n && j < n) {
+        if (uniqueChars.find(s[j]) == uniqueChars.end()) {
+            uniqueChars.insert(s[j++]);
+            maxLength = std::max(maxLength, j - i);
+        } else {
+            uniqueChars.erase(s[i++]);
+        }
+    }
+
+    return maxLength;
+}
+#include <iostream>
+
+int main() {
+    std::cout << lengthOfLongestSubstring("abcabcbb") << std::endl; // Output: 3
+    std::cout << lengthOfLongestSubstring("bbbbb") << std::endl;    // Output: 1
+    std::cout << lengthOfLongestSubstring("pwwkew") << std::endl;   // Output: 3
+
+    return 0;
+}
+
+Q-3)
+#include <unordered_map>
+
+int majorityElement(std::vector<int>& nums) {
+    int n = nums.size();
+    std::unordered_map<int, int> count;
+
+    for (int num : nums) {
+        count[num]++;
+        if (count[num] > n / 2) {
+            return num;
+        }
+    }
+
+    // The majority element always exists, so this line won't be reached.
+    return -1;
+}
+#include <iostream>
+#include <vector>
+
+int main() {
+    std::vector<int> nums = {3, 2, 3};
+    std::cout << majorityElement(nums) << std::endl; // Output: 3
+
+    nums = {2, 2, 1, 1, 1, 2, 2};
+    std::cout << majorityElement(nums) << std::endl; // Output: 2
+
+    return 0;
+}
+
+Q-4)
+#include <unordered_map>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+std::vector<std::vector<std::string>> groupAnagrams(std::vector<std::string>& strs) {
+    std::unordered_map<std::string, std::vector<std::string>> anagramGroups;
+
+    for (const std::string& str : strs) {
+        std::string sortedStr = str;
+        std::sort(sortedStr.begin(), sortedStr.end());
+
+        anagramGroups[sortedStr].push_back(str);
+    }
+
+    std::vector<std::vector<std::string>> result;
+    for (const auto& group : anagramGroups) {
+        result.push_back(group.second);
+    }
+
+    return result;
+}
+#include <iostream>
+#include <vector>
+#include <string>
+
+void printGroups(const std::vector<std::vector<std::string>>& groups) {
+    for (const auto& group : groups) {
+        std::cout << "[";
+        for (const std::string& str : group) {
+            std::cout << "\"" << str << "\", ";
+        }
+        std::cout << "]" << std::endl;
+    }
+}
+
+int main() {
+    std::vector<std::string> strs = {"eat", "tea", "tan", "ate", "nat", "bat"};
+    std::vector<std::vector<std::string>> groups = groupAnagrams(strs);
+    printGroups(groups);
+    // Output: [["bat"], ["nat", "tan"], ["ate", "eat", "tea"]]
+
+    strs = {""};
+    groups = groupAnagrams(strs);
+    printGroups(groups);
+    // Output: [[""]]
+
+    strs = {"a"};
+    groups = groupAnagrams(strs);
+    printGroups(groups);
+    // Output: [["a"]]
+
+    return 0;
+}
+
+Q-5)
+int nthUglyNumber(int n) {
+    std::vector<int> uglyNumbers(n);
+    uglyNumbers[0] = 1;
+    int nextMultipleOf2 = 2;
+    int nextMultipleOf3 = 3;
+    int nextMultipleOf5 = 5;
+    int index2 = 0;
+    int index3 = 0;
+    int index5 = 0;
+
+    for (int i = 1; i < n; i++) {
+        int nextUglyNumber = std::min(nextMultipleOf2, std::min(nextMultipleOf3, nextMultipleOf5));
+        uglyNumbers[i] = nextUglyNumber;
+
+        if (nextUglyNumber == nextMultipleOf2) {
+            index2++;
+            nextMultipleOf2 = uglyNumbers[index2] * 2;
+        }
+        if (nextUglyNumber == nextMultipleOf3) {
+            index3++;
+            nextMultipleOf3 = uglyNumbers[index3] * 3;
+        }
+        if (nextUglyNumber == nextMultipleOf5) {
+            index5++;
+            nextMultipleOf5 = uglyNumbers[index5] * 5;
+        }
+    }
+
+    return uglyNumbers[n - 1];
+}
+#include <iostream>
+
+int main() {
+    std::cout << nthUglyNumber(10) << std::endl; // Output: 12
+    std::cout << nthUglyNumber(1) << std::endl;  // Output: 1
+
+    return 0;
+}
+
+Q-6
+
+#include <vector>
+#include <string>
+#include <unordered_map>
+#include <algorithm>
+
+struct WordFrequency {
+    std::string word;
+    int frequency;
+
+    WordFrequency(const std::string& word, int frequency) : word(word), frequency(frequency) {}
+};
+
+bool compare(const WordFrequency& wf1, const WordFrequency& wf2) {
+    if (wf1.frequency == wf2.frequency) {
+        return wf1.word < wf2.word; // Sort by lexicographical order if frequencies are equal
+    }
+    return wf1.frequency > wf2.frequency; // Sort by frequency in descending order
+}
+
+std::vector<std::string> topKFrequent(std::vector<std::string>& words, int k) {
+    std::unordered_map<std::string, int> wordCount;
+    for (const std::string& word : words) {
+        wordCount[word]++;
+    }
+
+    std::vector<WordFrequency> wordFreq;
+    for (const auto& entry : wordCount) {
+        wordFreq.emplace_back(entry.first, entry.second);
+    }
+
+    std::sort(wordFreq.begin(), wordFreq.end(), compare);
+
+    std::vector<std::string> result;
+    for (int i = 0; i < k; i++) {
+        result.push_back(wordFreq[i].word);
+    }
+
+    return result;
+}
+#include <iostream>
+#include <vector>
+
+void printWords(const std::vector<std::string>& words) {
+    std::cout << "[";
+    for (const std::string& word : words) {
+        std::cout << "\"" << word << "\", ";
+    }
+    std::cout << "]" << std::endl;
+}
+
+int main() {
+    std::vector<std::string> words = {"i", "love", "leetcode", "i", "love", "coding"};
+    std::vector<std::string> result = topKFrequent(words, 2);
+    printWords(result);
+    // Output: ["i", "love"]
+
+    words = {"the", "day", "is", "sunny", "the", "the", "the", "sunny", "is", "is"};
+    result = topKFrequent(words, 4);
+    printWords(result);
+    // Output: ["the", "is", "sunny", "day"]
+
+    return 0;
+}
+
+Q-7
+
+#include <vector>
+#include <deque>
+
+std::vector<int> maxSlidingWindow(std::vector<int>& nums, int k) {
+    std::vector<int> result;
+    std::deque<int> window;
+
+    for (int i = 0; i < nums.size(); i++) {
+        // Remove elements outside of the current window from the front of the deque
+        while (!window.empty() && window.front() <= i - k) {
+            window.pop_front();
+        }
+
+        // Remove smaller elements from the back of the deque
+        while (!window.empty() && nums[window.back()] < nums[i]) {
+            window.pop_back();
+        }
+
+        // Add the current element to the back of the deque
+        window.push_back(i);
+
+        // If the window is of size k, add the maximum element to the result
+        if (i >= k - 1) {
+            result.push_back(nums[window.front()]);
+        }
+    }
+
+    return result;
+}
+#include <iostream>
+#include <vector>
+
+void printWindow(const std::vector<int>& window) {
+    std::cout << "[";
+    for (int num : window) {
+        std::cout << num << " ";
+    }
+    std::cout << "]" << std::endl;
+}
+
+int main() {
+    std::vector<int> nums = {1, 3, -1, -3, 5, 3, 6, 7};
+    int k = 3;
+    std::vector<int> result = maxSlidingWindow(nums, k);
+    printWindow(result);
+    // Output: [3, 3, 5, 5, 6, 7]
+
+    nums = {1};
+    k = 1;
+    result = maxSlidingWindow(nums, k);
+    printWindow(result);
+    // Output: [1]
+
+    return 0;
+}
+
+Q-8)
+
+#include <vector>
+#include <queue>
+#include <cmath>
+
+std::vector<int> findClosestElements(std::vector<int>& arr, int k, int x) {
+    std::vector<int> result;
+    std::priority_queue<std::pair<int, int>> maxHeap;
+
+    for (int num : arr) {
+        maxHeap.push({std::abs(num - x), num});
+
+        if (maxHeap.size() > k) {
+            maxHeap.pop();
+        }
+    }
+
+    while (!maxHeap.empty()) {
+        result.push_back(maxHeap.top().second);
+        maxHeap.pop();
+    }
+
+    std::sort(result.begin(), result.end());
+    return result;
+}
+#include <iostream>
+#include <vector>
+
+void printElements(const std::vector<int>& elements) {
+    std::cout << "[";
+    for (int num : elements) {
+        std::cout << num << " ";
+    }
+    std::cout << "]" << std::endl;
+}
+
+int main() {
+    std::vector<int> arr = {1, 2, 3, 4, 5};
+    int k = 4;
+    int x = 3;
+    std::vector<int> result = findClosestElements(arr, k, x);
+    printElements(result);
+    // Output: [1, 2, 3, 4]
+
+    arr = {1, 2, 3, 4, 5};
+    k = 4;
+    x = -1;
+    result = findClosestElements(arr, k, x);
+    printElements(result);
+    // Output: [1, 2, 3, 4]
+
+    return 0;
+}
